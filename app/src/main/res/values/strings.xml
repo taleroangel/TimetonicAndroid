@@ -2,9 +2,10 @@
     <string name="app_name">TimetonicAndroid</string>
     <string name="display_name">Welcome to Timetonic</string>
 
-    <string name="ok_label">Ok</string>
+    <string name="ok_label">OK</string>
     <string name="field_empty_error">This field cannot be empty</string>
     <string name="continue_label">Continue</string>
+    <string name="wait">Wait until the operation is completed</string>
 
     <string name="login">Log in into your account</string>
     <string name="login_failed">Failed to authenticate</string>
