@@ -9,7 +9,10 @@ import androidx.navigation.compose.rememberNavController
 fun RootNavigation(
     navigationController: NavHostController = rememberNavController(),
 ) {
-    NavHost(navController = navigationController, startDestination = "") {
-        authNavGraph()
+    NavHost(
+        navController = navigationController,
+        startDestination = NavigationRoutes.AuthRoute.route
+    ) {
+        authNavGraph(navigationController)
     }
 }

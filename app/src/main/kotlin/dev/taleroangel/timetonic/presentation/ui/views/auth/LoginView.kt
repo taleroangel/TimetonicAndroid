@@ -1,5 +1,6 @@
-package dev.taleroangel.timetonic.presentation.ui.views
+package dev.taleroangel.timetonic.presentation.ui.views.auth
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -38,6 +39,9 @@ import androidx.compose.ui.unit.dp
 import dev.taleroangel.timetonic.R
 import dev.taleroangel.timetonic.presentation.ui.theme.TimetonicApplicationTheme
 
+/**
+ * Request login credentials and authenticate
+ */
 @Composable
 fun LoginView(
     onContinue: (email: String, password: String) -> Boolean,
@@ -60,10 +64,12 @@ fun LoginView(
             ),
         ) {
 
-            Box(modifier = Modifier.size(24.dp)) {
+            Box(modifier = Modifier.size(90.dp)) {
                 Image(
                     painterResource(id = R.drawable.timetonic),
                     contentDescription = stringResource(id = R.string.app_name),
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Fit
                 )
             }
 
@@ -155,8 +161,16 @@ fun LoginView(
 }
 
 @Composable
-@Preview
-fun LoginViewPreview() {
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+fun LoginViewLightPreview() {
+    TimetonicApplicationTheme {
+        LoginView { _, _ -> false }
+    }
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+fun LoginViewDarkPreview() {
     TimetonicApplicationTheme {
         LoginView { _, _ -> false }
     }

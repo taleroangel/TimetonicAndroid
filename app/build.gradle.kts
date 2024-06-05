@@ -75,7 +75,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui.material3)
     implementation(libs.androidx.material.icons)
     implementation(libs.android.material)
 
@@ -86,6 +86,15 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.ktx)
     implementation(libs.androidx.navigation.compose)
+
+    // OkHttp
+    implementation(platform(libs.squareup.okhttp.bom))
+    implementation(libs.squareup.okhttp)
+
+    // Arrow
+    implementation(platform(libs.arrow.bom))
+    implementation(libs.arrow.core)
+    implementation(libs.arrow.fx.coroutines)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
