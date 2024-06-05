@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">TimetonicAndroid</string>
+    <string name="display_name">Welcome to Timetonic</string>
+
+    <string name="ok_label">Ok</string>
+    <string name="field_empty_error">This field cannot be empty</string>
+    <string name="continue_label">Continue</string>
+
+    <string name="login">Log in into your account</string>
+    <string name="login_failed">Failed to authenticate</string>
+    <string name="login_failed_description">Check your credentials and try again</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="password_visibility">Show/Hide password</string>
+</resources>
