@@ -175,7 +175,10 @@ fun LoginView(
                             alignment = Alignment.CenterVertically
                         )
                     ) {
-                        Text(text = stringResource(id = R.string.wait))
+                        Text(
+                            text = stringResource(id = R.string.wait),
+                            textAlign = TextAlign.Center,
+                        )
                         CircularProgressIndicator()
                     }
                 }

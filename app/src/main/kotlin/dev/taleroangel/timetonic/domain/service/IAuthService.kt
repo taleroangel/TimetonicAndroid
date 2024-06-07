@@ -3,6 +3,7 @@ package dev.taleroangel.timetonic.domain.service
 import arrow.core.Either
 import dev.taleroangel.timetonic.domain.entities.ApplicationKey
 import dev.taleroangel.timetonic.domain.entities.UserCredentials
+import dev.taleroangel.timetonic.domain.entities.UserDetails
 import dev.taleroangel.timetonic.infrastructure.exception.ExpiredTokenException
 
 /**
@@ -20,6 +21,12 @@ interface IAuthService {
      */
     suspend fun authenticate(
         email: String,
-        password: String
+        password: String,
+        appKey: ApplicationKey
     ): Result<UserCredentials>
+
+    /**
+     * Get the user details like email and name
+     */
+    suspend fun user(credentials: UserCredentials): Result<UserDetails>
 }

@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.jetbrains.kotlin.parcelize)
 
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.google.dagger.hilt)
@@ -25,6 +26,19 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        defaultConfig {
+            buildConfigField(
+                "String",
+                "TIMETONIC_API_URL",
+                project.properties["TIMETONIC_API_URL"].toString()
+            )
+            buildConfigField(
+                "String",
+                "TIMETONIC_API_VER",
+                project.properties["TIMETONIC_API_VER"].toString()
+            )
+        }
     }
 
     buildTypes {
@@ -44,6 +58,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -87,6 +102,9 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.ktx)
     implementation(libs.androidx.navigation.compose)
+
+    // Datastore
+    implementation(libs.androidx.datastore)
 
     // OkHttp
     implementation(platform(libs.squareup.okhttp.bom))

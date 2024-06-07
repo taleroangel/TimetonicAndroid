@@ -5,4 +5,5 @@ package dev.taleroangel.timetonic.presentation.navigation
  */
 sealed class NavigationRoutes(val route: String) {
     data object AuthRoute : NavigationRoutes("/auth")
+    data object HomeRoute : NavigationRoutes("/home")
 }
