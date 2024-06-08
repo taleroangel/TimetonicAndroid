@@ -45,7 +45,7 @@ fun BookItem(modifier: Modifier = Modifier, book: Book) {
                     model = book.coverUrl,
                     placeholder = painterResource(id = R.drawable.cover),
                     contentDescription = stringResource(id = R.string.book_cover),
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillWidth,
                 )
             } else {
                 Image(
@@ -129,6 +129,28 @@ fun BookItemDarkPreview() {
                     favorite = true,
                     title = faker.lorem.sentence(),
                     description = faker.lorem.paragraph()
+                ),
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+fun BookItemLoadPreview() {
+    // Generate fake data
+    val faker = Faker()
+
+    TimetonicApplicationTheme {
+        Surface {
+            BookItem(
+                modifier = Modifier.padding(16.dp),
+                book = Book(
+                    archived = true,
+                    favorite = true,
+                    title = faker.lorem.sentence(),
+                    description = faker.lorem.paragraph(),
+                    coverUrl = ""
                 ),
             )
         }

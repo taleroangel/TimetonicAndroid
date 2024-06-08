@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TimetonicAndroid</string>
+    <string name="app_name">Timetonic API</string>
     <string name="display_name">Welcome to Timetonic</string>
 
     <string name="ok_label">OK</string>
