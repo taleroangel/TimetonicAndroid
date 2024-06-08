@@ -9,5 +9,8 @@ sealed class NavigationRoutes(val route: String) {
         data object LoginAuthRoute : NavigationRoutes(this.route + "/login")
     }
 
-    data object HomeRoute : NavigationRoutes("/home")
+    data object HomeRoute : NavigationRoutes("/home") {
+        data object BooksHomeRoute : NavigationRoutes(this.route + "/books")
+        data object ProfileHomeRoute : NavigationRoutes(this.route + "/profile")
+    }
 }

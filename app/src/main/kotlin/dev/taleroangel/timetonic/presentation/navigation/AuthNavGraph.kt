@@ -30,7 +30,6 @@ fun NavGraphBuilder.authNavGraph(
             val state by authViewModel.authState.observeAsState()
             when (state) {
                 AuthViewState.NONE -> navController.navigateToAuthenticationLogin()
-                AuthViewState.AUTHENTICATED -> navController.navigateToHome()
                 else -> {}
             }
 
@@ -41,23 +40,10 @@ fun NavGraphBuilder.authNavGraph(
 
             // Observe the state and the authenticated user
             val state by authViewModel.authState.observeAsState()
-            val user by authViewModel.userDetails.observeAsState()
             val rememberCredentials by authViewModel.rememberCredentials.collectAsState()
 
             when (state) {
-                AuthViewState.AUTHENTICATED -> {
-                    Toast.makeText(
-                        LocalContext.current,
-                        stringResource(id = R.string.welcome, user!!.name),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    navController.navigateToHome()
-                }
-
-                AuthViewState.INIT -> {
-                    navController.navigateToAuthenticationInit()
-                }
-
+                AuthViewState.INIT -> { navController.navigateToAuthenticationInit() }
                 else -> {}
             }
 

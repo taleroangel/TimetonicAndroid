@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,10 +22,9 @@ import dev.taleroangel.timetonic.presentation.ui.theme.TimetonicApplicationTheme
 
 @Composable
 fun TryLoginView() {
-    Scaffold { paddingValues ->
+    Surface {
         Column(
             modifier = Modifier
-                .consumeWindowInsets(paddingValues)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
