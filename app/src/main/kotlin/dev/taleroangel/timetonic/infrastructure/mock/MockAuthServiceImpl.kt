@@ -1,10 +1,8 @@
 package dev.taleroangel.timetonic.infrastructure.mock
 
-import arrow.core.Either
 import dev.taleroangel.timetonic.domain.entities.ApplicationKey
 import dev.taleroangel.timetonic.domain.entities.UserCredentials
 import dev.taleroangel.timetonic.domain.entities.UserDetails
-import dev.taleroangel.timetonic.infrastructure.exception.ExpiredTokenException
 import dev.taleroangel.timetonic.domain.service.IAuthService
 import kotlinx.coroutines.delay
 import javax.inject.Inject

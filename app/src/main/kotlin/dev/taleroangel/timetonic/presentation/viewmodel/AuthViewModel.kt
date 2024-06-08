@@ -1,6 +1,12 @@
 package dev.taleroangel.timetonic.presentation.viewmodel
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -9,11 +15,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.taleroangel.timetonic.domain.entities.ApplicationKey
 import dev.taleroangel.timetonic.domain.entities.UserCredentials
 import dev.taleroangel.timetonic.domain.entities.UserDetails
+import dev.taleroangel.timetonic.domain.repository.IAuthRepository
 import dev.taleroangel.timetonic.domain.service.IAuthService
 import dev.taleroangel.timetonic.presentation.ui.state.AuthViewState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,87 +34,146 @@ class AuthViewModel @Inject constructor(
     private val authService: IAuthService,
 
     /**
+     * Stored credentials
+     */
+    private val authRepository: IAuthRepository,
+
+    /**
      * Keep state across configuration changes
      */
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     companion object {
+        /**
+         * TAG for using with [Log], [SavedStateHandle] and [DataStore]
+         */
         val TAG: String = AuthViewModel::class.simpleName!!
+    }
+
+    /**
+     * Check if credentials are stored
+     */
+    init {
+        viewModelScope.launch {
+            // Get the application key
+            val appKey = authRepository.applicationKey.first()
+            if (appKey == null) {
+                // Not authenticated
+                _authState.value = AuthViewState.NONE
+                return@launch
+            }
+
+            // Grab the value from the repository
+            authKey.value = appKey.value
+
+            // Get the stored credentials
+            val credentials = authRepository.credentials.first()
+            if (credentials == null) {
+                // Not authenticated
+                _authState.value = AuthViewState.NONE
+                return@launch
+            }
+
+            // Grab the value from the repository
+            authCredentials.value = credentials
+
+
+            // Authenticate user
+            authService.user(authCredentials.value!!).fold(
+                { user ->
+                    // Store the user details
+                    _userDetails.value = user
+                    // Change to success
+                    _authState.value = AuthViewState.AUTHENTICATED
+                }, { err ->
+                    // Emit the error
+                    Log.e(TAG, "Failed fetch user information", err)
+                    // Restart authentication variables
+                    restart()
+                })
+        }
     }
 
     /**
      * Represents the current authentication state
      */
-    private val _authState: MutableStateFlow<AuthViewState> =
-        MutableStateFlow(
-            savedStateHandle.get<AuthViewState>("auth:authState") ?: AuthViewState.NONE
-        )
-
-    /**
-     * Set the UI state considering the [savedStateHandle]
-     */
-    private fun setState(state: AuthViewState) {
-        _authState.value = state
-        savedStateHandle["auth:authState"] = authState.value
-    }
+    private val _authState: MutableLiveData<AuthViewState> =
+        savedStateHandle.getLiveData("$TAG:authState", AuthViewState.INIT)
 
     /**
      * Get the authentication UI status (immutable)
      */
-    val authState: StateFlow<AuthViewState> = _authState.asStateFlow()
+    val authState: LiveData<AuthViewState> = _authState
 
     /**
      * Authentication API key
      */
     private val authKey: MutableLiveData<String> =
-        savedStateHandle.getLiveData("auth:authKey", "")
+        savedStateHandle.getLiveData("$TAG:authKey", "")
 
     /**
      * Authentication credentials
      */
     private val authCredentials: MutableLiveData<UserCredentials?> =
-        savedStateHandle.getLiveData("auth:authCredentials", null)
+        savedStateHandle.getLiveData("$TAG:authCredentials", null)
 
     /**
      * Authenticated user details
      */
-    private val userDetails: MutableLiveData<UserDetails?> =
-        savedStateHandle.getLiveData("auth:userDetails", null)
+    private val _userDetails: MutableLiveData<UserDetails?> =
+        savedStateHandle.getLiveData("$TAG:userDetails", null)
+
+    /**
+     * Get the user details (immutable)
+     */
+    val userDetails: LiveData<UserDetails?>
+        get() = _userDetails
+
+    /**
+     * Should store credentials in [IAuthRepository]
+     */
+    val rememberCredentials: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     /**
      * Authenticate an user and gather its credentials
      */
     fun authenticate(email: String, password: String) {
 
-        setState(AuthViewState.AUTHENTICATING)
+        _authState.value = AuthViewState.AUTHENTICATING
 
         viewModelScope.launch {
-            // Check if auth key is present
-            if (authKey.value!!.isEmpty()) {
-                authService.key().fold(
-                    { appKey ->
-                        // Store the key
-                        authKey.value = appKey.value
-                    },
-                    { err ->
-                        // Emit the error
-                        Log.e(TAG, "Failed to obtain API key", err)
-                        setState(AuthViewState.FAILED)
-                        return@launch
-                    })
-            }
+            // Get the application key
+            authService.key().fold(
+                { appKey ->
+                    // Store the key
+                    authKey.value = appKey.value
+                    // Store it in persistent storage
+                    if (rememberCredentials.value) {
+                        authRepository.storeApplicationKey(appKey)
+                    }
+                },
+                { err ->
+                    // Emit the error
+                    Log.e(TAG, "Failed to obtain API key", err)
+                    _authState.value = AuthViewState.FAILED
+                    return@launch
+                })
 
             // Try to authenticate
             authService.authenticate(email, password, ApplicationKey(authKey.value!!)).fold(
                 { credentials ->
                     // Store the credentials
                     authCredentials.value = credentials
+                    // Store it in persistent storage
+                    if (rememberCredentials.value) {
+                        authRepository.storeCredentials(credentials)
+                    }
                 },
                 { err ->
                     // Emit the error
                     Log.e(TAG, "Failed to authenticate", err)
-                    setState(AuthViewState.FAILED)
+                    _authState.value = AuthViewState.FAILED
                     return@launch
                 })
 
@@ -116,16 +181,16 @@ class AuthViewModel @Inject constructor(
             authService.user(authCredentials.value!!).fold(
                 { user ->
                     // Store the user details
-                    userDetails.value = user
+                    _userDetails.value = user
                 }, { err ->
                     // Emit the error
                     Log.e(TAG, "Failed fetch user information", err)
-                    setState(AuthViewState.FAILED)
+                    _authState.value = AuthViewState.FAILED
                     return@launch
                 })
 
             // Change to success
-            setState(AuthViewState.AUTHENTICATED)
+            _authState.value = AuthViewState.AUTHENTICATED
         }
     }
 
@@ -134,11 +199,23 @@ class AuthViewModel @Inject constructor(
      */
     fun restart() {
         // Set the new state
-        setState(AuthViewState.NONE)
+        _authState.value = AuthViewState.NONE
 
         // Reset variables
         authKey.value = ""
         authCredentials.value = null
-        userDetails.value = null
+        _userDetails.value = null
+
+        // Delete data from repository
+        viewModelScope.launch {
+            authRepository.storeApplicationKey(null)
+            authRepository.storeCredentials(null)
+        }
     }
+
+    /**
+     * Alias for [restart].
+     * Just for code clarity
+     */
+    fun logout() = restart()
 }

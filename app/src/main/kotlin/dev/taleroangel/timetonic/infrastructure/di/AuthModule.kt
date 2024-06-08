@@ -3,12 +3,11 @@ package dev.taleroangel.timetonic.infrastructure.di
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
+import dev.taleroangel.timetonic.domain.repository.IAuthRepository
 import dev.taleroangel.timetonic.domain.service.IAuthService
 import dev.taleroangel.timetonic.infrastructure.https.HttpAuthServiceImpl
-import dev.taleroangel.timetonic.infrastructure.mock.MockAuthServiceImpl
-import javax.inject.Singleton
+import dev.taleroangel.timetonic.infrastructure.persistance.AuthDataStore
 
 /**
  * Dependency injection for the [IAuthService]
@@ -16,6 +15,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 interface AuthModule {
+
     /**
      * Provide the [IAuthService] implementation
      */
@@ -23,4 +23,12 @@ interface AuthModule {
     fun bindAuthService(
         authServiceImpl: HttpAuthServiceImpl
     ): IAuthService
+
+    /**
+     * Provide the [IAuthRepository] implementation
+     */
+    @Binds
+    fun bindAuthRepository(
+        authRepositoryImpl: AuthDataStore
+    ): IAuthRepository
 }

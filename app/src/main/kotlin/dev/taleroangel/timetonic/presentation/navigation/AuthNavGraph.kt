@@ -1,41 +1,91 @@
 package dev.taleroangel.timetonic.presentation.navigation
 
-import androidx.compose.runtime.LaunchedEffect
+import android.widget.Toast
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
+import dev.taleroangel.timetonic.R
 import dev.taleroangel.timetonic.presentation.ui.state.AuthViewState
 import dev.taleroangel.timetonic.presentation.ui.views.auth.LoginView
+import dev.taleroangel.timetonic.presentation.ui.views.auth.TryLoginView
 import dev.taleroangel.timetonic.presentation.viewmodel.AuthViewModel
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.getAndUpdate
 
 fun NavGraphBuilder.authNavGraph(
     navController: NavController,
     authViewModel: AuthViewModel,
 ) {
-    composable(route = NavigationRoutes.AuthRoute.route) {
+    navigation(
+        route = NavigationRoutes.AuthRoute.route,
+        startDestination = NavigationRoutes.AuthRoute.InitAuthRoute.route
+    ) {
 
-        val state by authViewModel.authState.collectAsState()
+        composable(route = NavigationRoutes.AuthRoute.InitAuthRoute.route) {
+            // Check if login is required
+            val state by authViewModel.authState.observeAsState()
+            when (state) {
+                AuthViewState.NONE -> navController.navigateToAuthenticationLogin()
+                AuthViewState.AUTHENTICATED -> navController.navigateToHome()
+                else -> {}
+            }
 
-        if (state == AuthViewState.AUTHENTICATED) {
-            navController.navigateToHome()
+            TryLoginView()
         }
 
-        LoginView(
-            showWaitDialog = state == AuthViewState.AUTHENTICATING,
-            showErrorDialog = state == AuthViewState.FAILED,
-            onDismissErrorDialog = { authViewModel.restart() },
-        ) { email, password ->
-            // Authenticate user in remote service
-            authViewModel.authenticate(email, password)
+        composable(route = NavigationRoutes.AuthRoute.LoginAuthRoute.route) {
+
+            // Observe the state and the authenticated user
+            val state by authViewModel.authState.observeAsState()
+            val user by authViewModel.userDetails.observeAsState()
+            val rememberCredentials by authViewModel.rememberCredentials.collectAsState()
+
+            when (state) {
+                AuthViewState.AUTHENTICATED -> {
+                    Toast.makeText(
+                        LocalContext.current,
+                        stringResource(id = R.string.welcome, user!!.name),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    navController.navigateToHome()
+                }
+
+                AuthViewState.INIT -> {
+                    navController.navigateToAuthenticationInit()
+                }
+
+                else -> {}
+            }
+
+            LoginView(
+                showWaitDialog = state == AuthViewState.AUTHENTICATING,
+                showErrorDialog = state == AuthViewState.FAILED,
+                onDismissErrorDialog = { authViewModel.restart() },
+                rememberCredentials = rememberCredentials,
+                onRememberCredentialsChange = { value ->
+                    authViewModel.rememberCredentials.value = value
+                }
+            ) { email, password ->
+                // Authenticate user in remote service
+                authViewModel.authenticate(email, password)
+            }
         }
+    }
+}
+
+internal fun NavController.navigateToAuthenticationInit() {
+    this.navigate(NavigationRoutes.AuthRoute.InitAuthRoute.route) {
+        popUpTo(0)
+    }
+}
+
+internal fun NavController.navigateToAuthenticationLogin() {
+    this.navigate(NavigationRoutes.AuthRoute.LoginAuthRoute.route) {
+        popUpTo(0)
     }
 }
 

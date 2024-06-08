@@ -1,21 +1,27 @@
 package dev.taleroangel.timetonic.presentation.ui.views.auth
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +57,8 @@ fun LoginView(
     showWaitDialog: Boolean = false,
     showErrorDialog: Boolean = false,
     onDismissErrorDialog: () -> Unit = {},
+    rememberCredentials: Boolean,
+    onRememberCredentialsChange: (Boolean) -> Unit,
     onContinue: (email: String, password: String) -> Unit,
 ) {
     var email: String by remember { mutableStateOf("") }
@@ -62,7 +71,8 @@ fun LoginView(
         Column(
             modifier = Modifier
                 .consumeWindowInsets(paddingValues)
-                .fillMaxSize(),
+                .padding(horizontal = 40.dp)
+                .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
                 14.dp, alignment = Alignment.CenterVertically
@@ -91,6 +101,7 @@ fun LoginView(
             )
 
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = email,
                 isError = emailError,
                 supportingText = {
@@ -101,9 +112,11 @@ fun LoginView(
                 singleLine = true,
                 label = { Text(text = stringResource(id = R.string.email)) },
                 onValueChange = { email = it; emailError = false; },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
             )
 
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = password,
                 isError = passwordError,
                 supportingText = {
@@ -115,6 +128,7 @@ fun LoginView(
                 label = { Text(text = stringResource(id = R.string.password)) },
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 onValueChange = { password = it; passwordError = false; },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 trailingIcon = {
                     IconButton(onClick = { showPassword = !showPassword }) {
                         Icon(
@@ -149,6 +163,17 @@ fun LoginView(
                     modifier = Modifier.padding(12.dp),
                     text = stringResource(id = R.string.continue_label),
                 )
+            }
+
+            Row(
+                modifier = Modifier.padding(top = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = rememberCredentials,
+                    onCheckedChange = onRememberCredentialsChange
+                )
+                Text(text = stringResource(id = R.string.remember_me))
             }
         }
     }
@@ -191,7 +216,13 @@ fun LoginView(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 fun LoginViewLightPreview() {
     TimetonicApplicationTheme {
-        LoginView { _, _ -> }
+        var rememberCredentials by remember {
+            mutableStateOf(false)
+        }
+
+        LoginView(rememberCredentials = rememberCredentials, onRememberCredentialsChange = {
+            rememberCredentials = !rememberCredentials
+        }) { _, _ -> }
     }
 }
 
@@ -199,7 +230,13 @@ fun LoginViewLightPreview() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun LoginViewDarkPreview() {
     TimetonicApplicationTheme {
-        LoginView { _, _ -> }
+        var rememberCredentials by remember {
+            mutableStateOf(true)
+        }
+
+        LoginView(rememberCredentials = rememberCredentials, onRememberCredentialsChange = {
+            rememberCredentials = !rememberCredentials
+        }) { _, _ -> }
     }
 }
 
@@ -207,7 +244,11 @@ fun LoginViewDarkPreview() {
 @Preview
 fun LoginViewErrorPreview() {
     TimetonicApplicationTheme {
-        LoginView(showErrorDialog = true) { _, _ -> }
+        LoginView(
+            showErrorDialog = true,
+            rememberCredentials = false,
+            onRememberCredentialsChange = {},
+        ) { _, _ -> }
     }
 }
 
@@ -215,6 +256,10 @@ fun LoginViewErrorPreview() {
 @Preview
 fun LoginViewWaitPreview() {
     TimetonicApplicationTheme {
-        LoginView(showWaitDialog = true) { _, _ -> }
+        LoginView(
+            showWaitDialog = true,
+            rememberCredentials = false,
+            onRememberCredentialsChange = {},
+        ) { _, _ -> }
     }
 }
