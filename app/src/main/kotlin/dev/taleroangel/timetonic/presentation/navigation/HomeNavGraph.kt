@@ -60,7 +60,9 @@ fun NavGraphBuilder.homeNavGraph(
                 val userCredentials by authViewModel.authCredentials.observeAsState()
 
                 LaunchedEffect(key1 = true) {
-                    booksViewModel.refresh(userCredentials!!)
+                    if (booksState == BooksViewState.Loading) {
+                        booksViewModel.refresh(userCredentials!!)
+                    }
                 }
 
                 // Show books with state

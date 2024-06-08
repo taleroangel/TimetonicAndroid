@@ -126,6 +126,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil)
+    implementation(libs.coil.compose)
 
     // Faker
     debugImplementation(libs.faker)
