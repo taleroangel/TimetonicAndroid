@@ -124,6 +124,12 @@ dependencies {
     implementation(libs.arrow.core)
     implementation(libs.arrow.fx.coroutines)
 
+    // Coil
+    implementation(libs.coil)
+
+    // Faker
+    debugImplementation(libs.faker)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

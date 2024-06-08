@@ -1,11 +1,7 @@
 package dev.taleroangel.timetonic.presentation.viewmodel
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -76,11 +72,11 @@ class AuthViewModel @Inject constructor(
             }
 
             // Grab the value from the repository
-            authCredentials.value = credentials
+            _authCredentials.value = credentials
 
 
             // Authenticate user
-            authService.user(authCredentials.value!!).fold(
+            authService.user(_authCredentials.value!!).fold(
                 { user ->
                     // Store the user details
                     _userDetails.value = user
@@ -115,8 +111,14 @@ class AuthViewModel @Inject constructor(
     /**
      * Authentication credentials
      */
-    private val authCredentials: MutableLiveData<UserCredentials?> =
+    private val _authCredentials: MutableLiveData<UserCredentials?> =
         savedStateHandle.getLiveData("$TAG:authCredentials", null)
+
+    /**
+     * Authentication credentials (immutable)
+     */
+    val authCredentials: LiveData<UserCredentials?>
+        get() = _authCredentials
 
     /**
      * Authenticated user details
@@ -164,7 +166,7 @@ class AuthViewModel @Inject constructor(
             authService.authenticate(email, password, ApplicationKey(authKey.value!!)).fold(
                 { credentials ->
                     // Store the credentials
-                    authCredentials.value = credentials
+                    _authCredentials.value = credentials
                     // Store it in persistent storage
                     if (rememberCredentials.value) {
                         authRepository.storeCredentials(credentials)
@@ -178,7 +180,7 @@ class AuthViewModel @Inject constructor(
                 })
 
             // Get user information
-            authService.user(authCredentials.value!!).fold(
+            authService.user(_authCredentials.value!!).fold(
                 { user ->
                     // Store the user details
                     _userDetails.value = user
@@ -203,7 +205,7 @@ class AuthViewModel @Inject constructor(
 
         // Reset variables
         authKey.value = ""
-        authCredentials.value = null
+        _authCredentials.value = null
         _userDetails.value = null
 
         // Delete data from repository

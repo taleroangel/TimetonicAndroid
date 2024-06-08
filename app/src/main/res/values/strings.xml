@@ -23,4 +23,13 @@
 
     <string name="books_title">Books</string>
     <string name="profile_title">Profile</string>
+
+    <string name="books">Your Books</string>
+    <string name="book_cover">Book Cover</string>
+    <string name="book_favorite">Favorite</string>
+    <string name="book_archived">Archived</string>
+    <string name="books_empty">There are no books in your collection</string>
+
+    <string name="refresh">Refresh</string>
+    <string name="error">An error has occurred</string>
 </resources>

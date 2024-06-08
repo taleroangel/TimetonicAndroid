@@ -14,11 +14,13 @@ import androidx.navigation.compose.rememberNavController
 import dev.taleroangel.timetonic.R
 import dev.taleroangel.timetonic.presentation.ui.state.AuthViewState
 import dev.taleroangel.timetonic.presentation.viewmodel.AuthViewModel
+import dev.taleroangel.timetonic.presentation.viewmodel.BooksViewModel
 
 @Composable
 fun RootNavigation(
     navController: NavHostController = rememberNavController(),
     authViewModel: AuthViewModel = viewModel(),
+    booksViewModel: BooksViewModel = viewModel(),
 ) {
     // Get authentication status
     val authenticationStatus by authViewModel.authState.observeAsState()
@@ -34,6 +36,7 @@ fun RootNavigation(
             ).show()
             navController.navigateToHome()
         }
+
         else -> {}
     }
 
@@ -44,6 +47,6 @@ fun RootNavigation(
         exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) }
     ) {
         authNavGraph(navController, authViewModel)
-        homeNavGraph(navController, authViewModel)
+        homeNavGraph(navController, authViewModel, booksViewModel)
     }
 }

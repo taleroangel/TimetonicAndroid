@@ -16,11 +16,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.taleroangel.timetonic.R
+import dev.taleroangel.timetonic.presentation.ui.state.BooksViewState
 import dev.taleroangel.timetonic.presentation.ui.views.home.BooksView
 import dev.taleroangel.timetonic.presentation.ui.views.home.HomeView
 import dev.taleroangel.timetonic.presentation.ui.views.home.ProfileView
 import dev.taleroangel.timetonic.presentation.viewmodel.AuthViewModel
+import dev.taleroangel.timetonic.presentation.viewmodel.BooksViewModel
 
+/**
+ * Representation of a menu item in home
+ */
 data class HomeRoutesNavBarItem(
     val route: String,
     val icon: @Composable () -> Unit = {},
@@ -30,9 +35,9 @@ data class HomeRoutesNavBarItem(
 
 fun NavGraphBuilder.homeNavGraph(
     navController: NavController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    booksViewModel: BooksViewModel,
 ) {
-
     /**
      * List of routes available to home
      */
@@ -48,7 +53,16 @@ fun NavGraphBuilder.homeNavGraph(
             label = {
                 Text(text = stringResource(id = R.string.books_title))
             },
-            content = { BooksView() },
+            content = {
+                // Get the state
+                val booksState by booksViewModel.booksViewState.observeAsState()
+                val userCredentials by authViewModel.authCredentials.observeAsState()
+
+                // Show books with state
+                BooksView(booksState ?: BooksViewState.Loading) {
+                    booksViewModel.refresh(userCredentials!!)
+                }
+            },
         ),
         HomeRoutesNavBarItem(
             route = NavigationRoutes.HomeRoute.ProfileHomeRoute.route,

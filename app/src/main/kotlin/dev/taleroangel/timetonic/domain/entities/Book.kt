@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 data class Book(
     val title: String,
     val description: String,
-    val coverUrl: String,
+    val coverUrl: String? = null,
     val favorite: Boolean,
     val archived: Boolean,
 ) : Parcelable
