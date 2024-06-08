@@ -18,9 +18,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -77,6 +80,8 @@ fun BooksView(
                 is BooksViewState.Error -> Column(
                     modifier = Modifier.padding(24.dp)
                 ) {
+                    val errorVerticalScrollState = rememberScrollState()
+
                     Icon(
                         modifier = Modifier
                             .padding(vertical = 16.dp)
@@ -88,8 +93,18 @@ fun BooksView(
                         text = stringResource(id = R.string.error),
                         style = MaterialTheme.typography.displaySmall,
                     )
-                    Text(text = state.err.toString())
+
+                    Card(modifier = Modifier.padding(top = 16.dp)) {
+                        Column(
+                            Modifier
+                                .padding(16.dp)
+                                .verticalScroll(errorVerticalScrollState)
+                        ) {
+                            Text(text = state.err.toString())
+                        }
+                    }
                 }
+
 
                 is BooksViewState.Content -> {
                     if (state.books.isEmpty()) {
@@ -125,18 +140,14 @@ fun BooksViewLightContentPreview() {
     val faker = Faker()
 
     TimetonicApplicationTheme {
-        BooksView(
-            state = BooksViewState.Content(
-                books = List(10) { _ ->
-                    Book(
-                        title = faker.lorem.sentence(),
-                        description = faker.lorem.paragraph(),
-                        favorite = faker.bool.bool(),
-                        archived = faker.bool.bool(),
-                    )
-                }
+        BooksView(state = BooksViewState.Content(books = List(10) { _ ->
+            Book(
+                title = faker.lorem.sentence(),
+                description = faker.lorem.paragraph(),
+                favorite = faker.bool.bool(),
+                archived = faker.bool.bool(),
             )
-        )
+        }))
     }
 }
 
@@ -147,18 +158,14 @@ fun BooksViewDarkContentPreview() {
     val faker = Faker()
 
     TimetonicApplicationTheme {
-        BooksView(
-            state = BooksViewState.Content(
-                books = List(10) { _ ->
-                    Book(
-                        title = faker.lorem.sentence(),
-                        description = faker.lorem.paragraph(),
-                        favorite = faker.bool.bool(),
-                        archived = faker.bool.bool(),
-                    )
-                }
+        BooksView(state = BooksViewState.Content(books = List(10) { _ ->
+            Book(
+                title = faker.lorem.sentence(),
+                description = faker.lorem.paragraph(),
+                favorite = faker.bool.bool(),
+                archived = faker.bool.bool(),
             )
-        )
+        }))
     }
 }
 
@@ -192,6 +199,21 @@ fun BooksViewErrorPreview() {
         BooksView(
             state = BooksViewState.Error(
                 Exception(faker.lorem.sentence())
+            )
+        )
+    }
+}
+
+@Composable
+@Preview
+fun BooksViewScrollErrorPreview() {
+    // Fake data generator
+    val faker = Faker()
+
+    TimetonicApplicationTheme {
+        BooksView(
+            state = BooksViewState.Error(
+                Exception(faker.lorem.paragraph(sentenceCount = 50))
             )
         )
     }

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.stringResource
@@ -57,6 +58,10 @@ fun NavGraphBuilder.homeNavGraph(
                 // Get the state
                 val booksState by booksViewModel.booksViewState.observeAsState()
                 val userCredentials by authViewModel.authCredentials.observeAsState()
+
+                LaunchedEffect(key1 = true) {
+                    booksViewModel.refresh(userCredentials!!)
+                }
 
                 // Show books with state
                 BooksView(booksState ?: BooksViewState.Loading) {

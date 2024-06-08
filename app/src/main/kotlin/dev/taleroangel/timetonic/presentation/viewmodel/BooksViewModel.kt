@@ -58,15 +58,22 @@ class BooksViewModel @Inject constructor(
 
         // Try and get the books
         viewModelScope.launch {
-            booksService.fetchBooks(credentials).fold(
-                { books ->
-                    // Set the content
-                    _booksViewState.value = BooksViewState.Content(books)
-                },
-                { err ->
-                    // Set the error state
-                    _booksViewState.value = BooksViewState.Error(err)
-                })
+            try {
+
+                booksService.fetchBooks(credentials).fold(
+                    { books ->
+                        // Set the content
+                        _booksViewState.value = BooksViewState.Content(books)
+                    },
+                    { err ->
+                        // Set the error state
+                        _booksViewState.value = BooksViewState.Error(err)
+                    })
+
+            } catch (e: Throwable) {
+                // Set the error state
+                _booksViewState.value = BooksViewState.Error(e)
+            }
         }
     }
 }

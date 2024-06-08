@@ -43,13 +43,16 @@ fun BookItem(modifier: Modifier = Modifier, book: Book) {
                 Text(
                     text = book.title,
                     style = MaterialTheme.typography.headlineSmall.copy(
-                        fontSize = 18.sp, fontWeight = FontWeight.W600
+                        fontSize = 17.sp, fontWeight = FontWeight.W600, lineHeight = 20.sp
                     ),
                 )
-                Text(
-                    text = book.description, maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                if (book.description != null)
+                    Text(
+                        modifier = Modifier.padding(top = 6.dp),
+                        text = book.description, maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
             }
         }
         Row(

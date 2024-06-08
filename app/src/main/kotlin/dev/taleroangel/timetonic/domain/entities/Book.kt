@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 @Parcelize
 data class Book(
     val title: String,
-    val description: String,
+    val description: String? = null,
     val coverUrl: String? = null,
     val favorite: Boolean,
     val archived: Boolean,

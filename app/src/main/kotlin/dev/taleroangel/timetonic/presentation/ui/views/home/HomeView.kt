@@ -2,6 +2,7 @@ package dev.taleroangel.timetonic.presentation.ui.views.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Book
 import androidx.compose.material.icons.rounded.Person
@@ -57,7 +58,7 @@ fun HomeView(
             }
         }
     }) { paddingValues ->
-        Box(modifier = Modifier.consumeWindowInsets(paddingValues)) {
+        Box(modifier = Modifier.padding(paddingValues)) {
             content.invoke()
         }
     }

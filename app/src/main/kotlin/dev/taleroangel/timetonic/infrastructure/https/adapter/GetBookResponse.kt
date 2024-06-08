@@ -25,7 +25,7 @@ data class AllBooksResponse(
 data class SingleBookResponse(
     val archived: Boolean,
     val favorite: Boolean,
-    val description: String,
+    val description: String? = null,
     val ownerPrefs: BookOwnerPrefsResponse
 )
 
