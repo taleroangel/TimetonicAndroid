@@ -13,4 +13,4 @@ data class GetAppKeyResponse(
     override val errorCode: String? = null,
     override val errorMsg: String? = null,
     @SerialName("appkey") val appKey: String? = null,
-) : TimetonicAPIResponse
+) : TimetonicResponseAdapter

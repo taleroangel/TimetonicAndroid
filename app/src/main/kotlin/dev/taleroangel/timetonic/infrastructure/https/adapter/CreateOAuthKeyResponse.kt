@@ -11,4 +11,4 @@ data class CreateOAuthKeyResponse(
     override val errorCode: String? = null,
     @SerialName("oauthkey") val oAuthKey: String,
     @SerialName("o_u") val ou: String,
-) : TimetonicAPIResponse
+) : TimetonicResponseAdapter

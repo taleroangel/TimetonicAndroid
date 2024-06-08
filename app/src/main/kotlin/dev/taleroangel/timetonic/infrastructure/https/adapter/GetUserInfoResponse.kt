@@ -14,7 +14,7 @@ data class GetUserInfoResponse(
     override val errorMsg: String? = null,
 
     val userInfo: UserInfoResponse
-) : TimetonicAPIResponse
+) : TimetonicResponseAdapter
 
 /**
  * Embedded user information inside [GetUserInfoResponse]

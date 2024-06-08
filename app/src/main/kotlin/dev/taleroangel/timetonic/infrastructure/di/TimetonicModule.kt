@@ -15,5 +15,9 @@ import dev.taleroangel.timetonic.infrastructure.https.TimetonicHttpProperties
 object TimetonicModule {
     @Provides
     fun provideTimetonicHttpProperties(): TimetonicHttpProperties =
-        TimetonicHttpProperties(BuildConfig.TIMETONIC_API_URL, BuildConfig.TIMETONIC_API_VER)
+        TimetonicHttpProperties(
+            BuildConfig.TIMETONIC_BASE_URL,
+            BuildConfig.TIMETONIC_API_URL,
+            BuildConfig.TIMETONIC_API_VER,
+        )
 }

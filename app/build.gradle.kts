@@ -30,6 +30,11 @@ android {
         defaultConfig {
             buildConfigField(
                 "String",
+                "TIMETONIC_BASE_URL",
+                project.properties["TIMETONIC_BASE_URL"].toString()
+            )
+            buildConfigField(
+                "String",
                 "TIMETONIC_API_URL",
                 project.properties["TIMETONIC_API_URL"].toString()
             )

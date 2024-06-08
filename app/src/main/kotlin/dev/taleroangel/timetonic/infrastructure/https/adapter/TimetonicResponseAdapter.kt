@@ -4,7 +4,7 @@ package dev.taleroangel.timetonic.infrastructure.https.adapter
  * A request with a status response
  * This is a mixin class
  */
-interface TimetonicAPIResponse {
+interface TimetonicResponseAdapter {
 
     /**
      * Request type

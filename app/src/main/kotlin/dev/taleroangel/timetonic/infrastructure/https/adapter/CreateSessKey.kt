@@ -13,4 +13,4 @@ data class CreateSessKey(
     override val errorCode: String? = null,
     override val errorMsg: String? = null,
     @SerialName("sesskey") val sessKey: String,
-): TimetonicAPIResponse
+): TimetonicResponseAdapter
