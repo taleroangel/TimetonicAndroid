@@ -31,6 +31,6 @@ data class SingleBookResponse(
 
 @Serializable
 data class BookOwnerPrefsResponse(
-    @SerialName("oCoverImg") val cover: String,
+    @SerialName("oCoverImg") val cover: String? = null,
     val title: String,
 )

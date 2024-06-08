@@ -6,7 +6,6 @@ import dev.taleroangel.timetonic.domain.entities.UserCredentials
 import dev.taleroangel.timetonic.domain.service.IBookService
 import dev.taleroangel.timetonic.infrastructure.https.adapter.GetBookResponse
 import dev.taleroangel.timetonic.infrastructure.https.adapter.SingleBookResponse
-import okhttp3.FormBody
 import javax.inject.Inject
 
 /**
@@ -45,7 +44,9 @@ class HttpBookServiceImpl @Inject constructor(
                     description = book.description,
                     archived = book.archived,
                     favorite = book.favorite,
-                    coverUrl = timetonicHttpProperties.baseUrl + book.ownerPrefs.cover
+                    coverUrl = if (book.ownerPrefs.cover != null)
+                        (timetonicHttpProperties.baseUrl + book.ownerPrefs.cover)
+                    else null
                 )
             }.toList()
         }

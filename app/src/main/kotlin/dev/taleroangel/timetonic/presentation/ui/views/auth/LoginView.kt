@@ -1,6 +1,5 @@
 package dev.taleroangel.timetonic.presentation.ui.views.auth
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -28,7 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -143,15 +141,15 @@ fun LoginView(
             Button(
                 onClick = {
                     // Check parameters
-                    var validationSuccess = true;
+                    var validationSuccess = true
 
                     if (email.isEmpty()) {
-                        emailError = true;
-                        validationSuccess = false;
+                        emailError = true
+                        validationSuccess = false
                     }
                     if (password.isEmpty()) {
-                        passwordError = true;
-                        validationSuccess = false;
+                        passwordError = true
+                        validationSuccess = false
                     }
 
                     // Call login

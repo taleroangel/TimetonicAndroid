@@ -4,12 +4,10 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.taleroangel.timetonic.domain.repository.IAuthRepository
 import dev.taleroangel.timetonic.domain.service.IAuthService
 import dev.taleroangel.timetonic.domain.service.IBookService
 import dev.taleroangel.timetonic.infrastructure.https.HttpAuthServiceImpl
 import dev.taleroangel.timetonic.infrastructure.https.HttpBookServiceImpl
-import dev.taleroangel.timetonic.infrastructure.persistance.AuthDataStore
 
 /**
  * Dependency injection for the services provided
